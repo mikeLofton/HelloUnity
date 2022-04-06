@@ -10,6 +10,10 @@ public class PlayerMovementBehavior : MonoBehaviour
     private Vector3 _moveDirection;
     private Vector2 _rotationDirection;
     private Camera _camera;
+    [SerializeField]
+    private float _rotationSpeedY;
+    [SerializeField]
+    private float _rotationSpeedX;
 
     public Vector3 MoveDirection
     {
@@ -33,11 +37,11 @@ public class PlayerMovementBehavior : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        Quaternion playerRotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y + MouseDirection.x, 0);
-        float cameraXRotation = Mathf.Clamp(transform.rotation.eulerAngles.x + MouseDirection.y, -89, 89);
+        Quaternion playerRotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y + MouseDirection.x * _rotationSpeedY * Time.deltaTime, 0);
+        float cameraXRotation = Mathf.Clamp(transform.rotation.eulerAngles.x + MouseDirection.y * _rotationSpeedY * Time.deltaTime, -89, 89);
         Quaternion cameraRotation = Quaternion.Euler(cameraXRotation, 0, 0);
         _rigidbody.MoveRotation(playerRotation);
-        _camera.transform.localRotation = cameraRotation;
+        _camera.transform.Rotate(new Vector3(-cameraXRotation, 0, 0) * Time.deltaTime * _rotationSpeedX);
         Vector3 velocity = MoveDirection * _speed * Time.fixedDeltaTime;
         _rigidbody.MovePosition(transform.position + velocity);
     }
